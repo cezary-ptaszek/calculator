@@ -5,7 +5,9 @@ import java.awt.*;
 public class Calculator {
 
     public static Double value;
-    public static String operation=null;
+    public static String operation = null;
+    public static Boolean isChecked = false;
+    public static JTextArea tScore;
 
     public Calculator(Double value) {
         this.value = value;
@@ -15,26 +17,28 @@ public class Calculator {
     void gui(){
         JFrame f = new JFrame("Calculator");
 
-        JTextArea tWindow = new JTextArea("");
-        tWindow.setBorder(new LineBorder(Color.BLACK,4));
-        tWindow.setBackground(Color.BLACK);
-        tWindow.setForeground(Color.WHITE);
-        tWindow.setFont(new Font("Arial", Font.BOLD, 16));
+        tScore = new JTextArea("");
+        tScore.setBorder(new LineBorder(Color.BLACK,4));
+        tScore.setBackground(Color.BLACK);
+        tScore.setForeground(Color.WHITE);
+        tScore.setFont(new Font("Arial", Font.BOLD, 16));
 
-        JButton bOne = bCoolButton("1");
-        JButton bTwo = bCoolButton("2");
-        JButton bThree = bCoolButton("3");
-        JButton bFour = bCoolButton("4");
-        JButton bFive = bCoolButton("5");
-        JButton bSix = bCoolButton("6");
-        JButton bSeven = bCoolButton("7");
-        JButton bEight = bCoolButton("8");
-        JButton bNine = bCoolButton("9");
-        JButton bZero = bCoolButton("0");
-        JButton bAdd = bCoolButton("+");
-        JButton bSubtract = bCoolButton("-");
-        JButton bMultiply = bCoolButton("*");
-        JButton bDivide = bCoolButton("/");
+        JButton bOne = new CoolDigitsButton("1");
+        JButton bTwo = new CoolDigitsButton("2");
+        JButton bThree = new CoolDigitsButton("3");
+        JButton bFour = new CoolDigitsButton("4");
+        JButton bFive = new CoolDigitsButton("5");
+        JButton bSix = new CoolDigitsButton("6");
+        JButton bSeven = new CoolDigitsButton("7");
+        JButton bEight = new CoolDigitsButton("8");
+        JButton bNine = new CoolDigitsButton("9");
+        JButton bZero = new CoolDigitsButton("0");
+
+        JButton bAdd = new CoolSignsButton("+");
+        JButton bSubtract = new CoolSignsButton("-");
+        JButton bMultiply = new CoolSignsButton("*");
+        JButton bDivide = new CoolSignsButton("/");
+
         JButton bEquals = bCoolButton("=");
         JButton bCancel = bCoolButton("C");
 
@@ -49,89 +53,61 @@ public class Calculator {
         textPanel.setBorder(new LineBorder(Color.ORANGE,4));
         textPanel.setLayout(new FlowLayout(2));
         myContainer.add(textPanel, BorderLayout.NORTH);
-        textPanel.add(tWindow);
+        textPanel.add(tScore);
 
         JPanel gridPane = new JPanel();
-        gridPane.setLayout(new GridLayout(6,3,3,3));
+        gridPane.setLayout(new GridLayout(4,4,3,3));
         gridPane.setBorder(new LineBorder(Color.ORANGE,3));
         gridPane.setBackground(Color.ORANGE);
         myContainer.add(gridPane);
+
         gridPane.add(bOne);
         gridPane.add(bTwo);
         gridPane.add(bThree);
+        gridPane.add(bAdd);
+
         gridPane.add(bFour);
         gridPane.add(bFive);
         gridPane.add(bSix);
+        gridPane.add(bSubtract);
+
         gridPane.add(bSeven);
         gridPane.add(bEight);
         gridPane.add(bNine);
-        gridPane.add(bZero);
-        gridPane.add(bCancel);
-        gridPane.add(bAdd);
-        gridPane.add(bSubtract);
         gridPane.add(bMultiply);
-        gridPane.add(bDivide);
+
+        gridPane.add(bCancel);
+        gridPane.add(bZero);
         gridPane.add(bEquals);
+        gridPane.add(bDivide);
 
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(300,400);
+        f.setSize(300,300);
         f.setVisible(true);
 
-        bOne.addActionListener(e ->{
-            if(tWindow.getText()=="") tWindow.setText("1");
-            tWindow.append("1")
-        });
-        bTwo.addActionListener(e -> tWindow.append("2"));
-        bThree.addActionListener(e -> tWindow.append("3"));
-        bFour.addActionListener(e -> tWindow.append("4"));
-        bFive.addActionListener(e -> tWindow.append("5"));
-        bSix.addActionListener(e -> tWindow.append("6"));
-        bSeven.addActionListener(e -> tWindow.append("7"));
-        bEight.addActionListener(e -> tWindow.append("8"));
-        bNine.addActionListener(e -> tWindow.append("9"));
-        bZero.addActionListener(e -> tWindow.append("0"));
-        bAdd.addActionListener(e -> {
-            value=Double.parseDouble(tWindow.getText());
-            tWindow.setText("");
-            operation = "add";
-        });
-        bSubtract.addActionListener(e -> {
-            value=Double.parseDouble(tWindow.getText());
-            tWindow.setText("");
-            operation = "subtract";
-        });
-        bMultiply.addActionListener(e -> {
-            value=Double.parseDouble(tWindow.getText());
-            tWindow.setText("");
-            operation = "multiply";
-        });
-        bDivide.addActionListener(e -> {
-            value=Double.parseDouble(tWindow.getText());
-            tWindow.setText("");
-            operation = "divide";
-        });
         bEquals.addActionListener(e -> {
             if(operation!=null){
                 switch(operation){
                     case"add":
-                        value+=Double.parseDouble(tWindow.getText());
+                        value+=Double.parseDouble(tScore.getText());
                         break;
                     case "subtract":
-                        value-=Double.parseDouble(tWindow.getText());
+                        value-=Double.parseDouble(tScore.getText());
                         break;
                     case "multiply":
-                        value*=Double.parseDouble(tWindow.getText());
+                        value*=Double.parseDouble(tScore.getText());
                         break;
                     case "divide":
-                        value/=Double.parseDouble(tWindow.getText());
+                        value/=Double.parseDouble(tScore.getText());
                         break;
                 }
             }
-            tWindow.setText(value.toString());
+            tScore.setText(value.toString());
         });
         bCancel.addActionListener(e -> {
-            value=0d;
-            tWindow.setText("0");
+            value = 0d;
+            tScore.setText("0");
+            isChecked = true;
             operation = null;
         });
     }
@@ -143,5 +119,4 @@ public class Calculator {
         button.setFont(new Font("Arial", Font.BOLD, 16));
         return button;
     }
-
 }
